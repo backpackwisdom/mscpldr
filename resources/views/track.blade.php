@@ -35,7 +35,10 @@
         <p>Your browser does not support audio content.</p>
     </audio>
 
-    <a href="{{ route('track-edit.get', ['track_id' => $track->id]) }}">Edit</a>
-    <a onclick="confirmMessage('Do you really want to remove this track?')" href="{{ route('track-remove.get', ['track_id' => $track->id]) }}">Remove</a>
+    @if(Auth::user() == $user)
+        <a href="{{ route('track-edit.get', ['track_id' => $track->id]) }}">Edit</a>
+        <a onclick="confirmMessage('Do you really want to remove this track?')" href="{{ route('track-remove.get', ['track_id' => $track->id]) }}">Remove</a>
+    @endif
+
     @include('includes.footer')
 @endsection

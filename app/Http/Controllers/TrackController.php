@@ -162,7 +162,14 @@ class TrackController extends Controller {
 
     public function getRemoveTrack($track_id) {
         $track = Track::where('id', $track_id)->first();
+        $uploader = User::where('id', $track->n_felhid)->first();
         $user = Auth::user();
+
+        if($uploader != $user) {
+            return redirect('dashboard')->with([
+                'message' => 'You have no access to the page.'
+            ]);
+        }
 
         // deleting files from the directory and then the directory itself
         $path = storage_path().'\\users\\'.$user->c_felhnev.'\\uploads\\'.$track_id;

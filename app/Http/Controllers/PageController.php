@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use DB;
 use Auth;
+use App;
 use App\Follower;
 use App\User;
 use App\Genre;
@@ -88,6 +89,13 @@ class PageController extends Controller {
     public function getEditTrack($track_id) {
         $track = Track::where('id', $track_id)->first();
         $genres = Genre::orderBy('c_mufajnev', 'asc')->get();
+        $user = User::where('id', $track->n_felhid)->first();
+
+        if($user != Auth::user()) {
+            return redirect()->with([
+                'message' => 'You have no access to the page.'
+            ]);
+        }
 
         return view('track-edit', [
             'track' => $track,

@@ -6,6 +6,8 @@ use DB;
 use Auth;
 use App\Follower;
 use App\User;
+use App\Genre;
+use App\Track;
 
 class PageController extends Controller {
     public function getProfilePage($user_id) {
@@ -30,14 +32,20 @@ class PageController extends Controller {
 
     public function getDashboardPage() {
         $latest_users = User::orderBy('id', 'desc')->take(5)->get();
+        $latest_tracks = Track::orderBy('id', 'desc')->get();
 
         return view('dashboard', [
-            'users' => $latest_users
+            'users' => $latest_users,
+            'tracks' => $latest_tracks
         ]);
     }
 
     public function getUploadPage() {
-        return view('upload');
+        $genres = Genre::orderBy('c_mufajnev', 'asc')->get();
+
+        return view('upload', [
+            'genres' => $genres
+        ]);
     }
 
     public function getPasswordChangePage() {
@@ -64,6 +72,26 @@ class PageController extends Controller {
         return view('subscriptions', [
             'followed' => $followed,
             'followers' => $followers
+        ]);
+    }
+
+    public function getTrackPage($track_id, $track_slug) {
+        $track = Track::where('id', $track_id)->first();
+        $user = User::where('id', $track->n_felhid)->first();
+
+        return view('track', [
+            'track' => $track,
+            'user' => $user
+        ]);
+    }
+
+    public function getEditTrack($track_id) {
+        $track = Track::where('id', $track_id)->first();
+        $genres = Genre::orderBy('c_mufajnev', 'asc')->get();
+
+        return view('track-edit', [
+            'track' => $track,
+            'genres' => $genres
         ]);
     }
 }

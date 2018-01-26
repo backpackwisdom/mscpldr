@@ -23,6 +23,21 @@ Route::group(['middleware' => ['web']], function() {
         'as' => 'user.get'
     ]);
 
+    Route::get('track/{track_id}/{track_slug}', [
+        'uses' => 'PageController@getTrackPage',
+        'as' => 'track.get'
+    ]);
+
+    Route::get('cover/{filename}', [
+        'uses' => 'TrackController@getTrackCover',
+        'as' => 'track.cover'
+    ]);
+
+    Route::get('track/{filename}', [
+        'uses' => 'TrackController@getTrackData',
+        'as' => 'track.content'
+    ]);
+
     // authenticated users
     Route::group(['middleware' => ['auth']], function() {
         Route::get('/dashboard', [
@@ -55,6 +70,11 @@ Route::group(['middleware' => ['web']], function() {
             'as' => 'followed.get'
         ]);
 
+        Route::get('/track-edit/{track_id}', [
+            'uses' => 'PageController@getEditTrack',
+            'as' => 'track-edit.get'
+        ]);
+
         Route::post('/settings', [
             'uses' => 'UserController@postAccountData',
             'as' => 'settings.post'
@@ -73,6 +93,21 @@ Route::group(['middleware' => ['web']], function() {
         Route::post('/remove-follower/{followed_id}', [
             'uses' => 'FollowerController@postRemoveFollower',
             'as' => 'follower.remove'
+        ]);
+
+        Route::post('/upload', [
+            'uses' => 'TrackController@postUploadTrack',
+            'as' => 'upload.post'
+        ]);
+
+        Route::post('/track-edit/{track_id}', [
+            'uses' => 'TrackController@postEditTrack',
+            'as' => 'track-edit.post'
+        ]);
+
+        Route::get('/track-remove/{track_id}', [
+            'uses' => 'TrackController@getRemoveTrack',
+            'as' => 'track-remove.get'
         ]);
     });
 

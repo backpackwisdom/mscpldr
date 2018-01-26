@@ -15,12 +15,21 @@ class UserController extends Controller {
         return substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
     }
 
-    public function deleteAllFiles($dir_path) {
+    public function deleteFiles($dir_path, $ext = null) {
         $files = glob($dir_path);
 
         foreach($files as $file) {
             if(is_file($file)) {
-                unlink($file);
+                if($ext != null) {
+                    // delete files with certain extension
+                    $path = pathinfo($file);
+                    if($path['extension'] == $ext) {
+                        unlink($file);
+                    }
+                } else {
+                    // delete all files
+                    unlink($file);
+                }
             }
         }
     }
@@ -106,6 +115,7 @@ class UserController extends Controller {
 
     public function postAccountData(Request $request) {
         $user = Auth::user();
+        dd($request);
 
         switch($request['button']) {
             // form submitting
@@ -138,7 +148,7 @@ class UserController extends Controller {
                     $avatar_dir_files = Storage::disk('users')->allFiles($userfolder);
 
                     if(!empty($avatar_dir_files)) {
-                        $this->deleteAllFiles(storage_path('users\\'.$user->c_felhnev.'\\avatar\\*'));
+                        $this->deleteFiles(storage_path('users\\'.$user->c_felhnev.'\\avatar\\*'));
                     }
 
                     Storage::disk('users')->put($userfolder.'/'.$filename, File::get($file));
@@ -149,7 +159,7 @@ class UserController extends Controller {
             case 'remove-avatar':
                 $user->c_avatarlink = 'noavatar.jpg';
 
-                $this->deleteAllFiles(storage_path('users\\'.$user->c_felhnev.'\\avatar\\*'));
+                $this->deleteFiles(storage_path('users\\'.$user->c_felhnev.'\\avatar\\*'));
 
                 // copy default avatar
                 $orig = storage_path().'\\pub\\noavatar.jpg';

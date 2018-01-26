@@ -8,6 +8,17 @@
     @include('includes.header')
     Welcome to the dashboard, {{ Auth::user()->c_felhnev }}!
 
+    <p>Latest tracks</p>
+    @if(count($tracks) > 0)
+        <ul>
+            @foreach($tracks->all() as $track)
+                <li><a href="{{ route('track.get', ['track_id' => $track->id, 'track_slug' => $track->c_zenelink]) }}">{{ $track->c_eloado }} - {{ $track->c_cim }}</a></li>
+            @endforeach
+        </ul>
+    @endif
+
+    <p>Latest albums</p>
+
     <p>Latest users</p>
     @if(count($users) > 0)
         <ul>

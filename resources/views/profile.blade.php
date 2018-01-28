@@ -24,12 +24,12 @@
 
     @if(Auth::user() != $user)
         @if($following == false)
-            <form id="form-follow-user" action="{{ route('follower.add', ['followed_id' => $user->id]) }}" method="post">
+            <form action="{{ route('follower.add', ['followed_id' => $user->id]) }}" method="post">
                 <input type="hidden" name="_token" value="{{ Session::token() }}">
                 <button type="submit">Follow user</button>
             </form>
         @else
-            <form id="form-unfollow-user" action="{{ route('follower.remove', ['followed_id' => $user->id]) }}" method="post">
+            <form action="{{ route('follower.remove', ['followed_id' => $user->id]) }}" method="post">
                 <input type="hidden" name="_token" value="{{ Session::token() }}">
                 <button type="submit">Unfollow user</button>
             </form>

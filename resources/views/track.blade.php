@@ -35,10 +35,56 @@
         <p>Your browser does not support audio content.</p>
     </audio>
 
+    <p>------------------------------------------------</p>
+
     @if(Auth::user() == $user)
         <a href="{{ route('track-edit.get', ['track_id' => $track->id]) }}">Edit</a>
         <a onclick="confirmMessage('Do you really want to remove this track?')" href="{{ route('track-remove.get', ['track_id' => $track->id]) }}">Remove</a>
     @endif
 
+    <p>------------------------------------------------</p>
+
+    <button type="button" name="post-create">Create new post</button>
+
+    @if(Auth::user())
+        <form action="{{ route('post.create', ['track_id' => $track->id]) }}" method="post" id="form-create-post" hidden>
+            <textarea name="c_szoveg" cols="50" rows="10"></textarea>
+            <input type="hidden" name="_token" value="{{ Session::token() }}">
+            <button type="submit">Send</button>
+            <button type="button" name="post-cancel">Cancel</button>
+        </form>
+    @endif
+
+    <p>------------------------------------------------</p>
+
+    <p>Comments</p>
+
+    @if(count($posts) > 0)
+        @foreach($posts->all() as $post)
+            <article data-postid="{{ $post->id }}">
+                <label>{{ $post->c_felhnev }} - {{ $post->created_at }}</label>
+
+                @if(Auth::user())
+                    <button type="button" name="post-reply">Reply</button>
+
+                    @if($user == Auth::user())
+                        <a name="post-delete" href="{{ route('post.remove', ['post_id' => $post->id]) }}">Remove</a>
+                    @endif
+                @endif
+
+                <p>{{ $post->c_szoveg }}</p>
+            </article>
+        @endforeach
+    @else
+        <p>There are no comments.</p>
+    @endif
+
     @include('includes.footer')
+@endsection
+
+@section('page-js')
+    <script>
+        var url_createpost = '{{ route('post.create', ['track_id' => $track->id]) }}';
+    </script>
+    <script src="{{ URL::to('js/track.js') }}"></script>
 @endsection

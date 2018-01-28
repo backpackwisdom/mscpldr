@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Post;
 use DB;
 use Auth;
-use App;
 use App\Follower;
 use App\User;
 use App\Genre;
@@ -80,9 +80,17 @@ class PageController extends Controller {
         $track = Track::where('id', $track_id)->first();
         $user = User::where('id', $track->n_felhid)->first();
 
+        $posts = DB::table('posts')
+            ->join('users', 'posts.n_felh_id', '=', 'users.id')
+            ->select('posts.*', 'users.c_felhnev')
+            ->where('posts.n_szam_id', '=', $track_id)
+            ->orderBy('posts.created_at', 'desc')
+            ->get();
+
         return view('track', [
             'track' => $track,
-            'user' => $user
+            'user' => $user,
+            'posts' => $posts
         ]);
     }
 

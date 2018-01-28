@@ -109,6 +109,16 @@ Route::group(['middleware' => ['web']], function() {
             'uses' => 'TrackController@getRemoveTrack',
             'as' => 'track-remove.get'
         ]);
+
+        Route::post('/post-create/{track_id}', [
+            'uses' => 'PostController@postCreatePost',
+            'as' => 'post.create'
+        ]);
+
+        Route::get('/post-remove/{post_id}', [
+            'uses' => 'PostController@getDeletePost',
+            'as' => 'post.remove'
+        ]);
     });
 
     // guest users

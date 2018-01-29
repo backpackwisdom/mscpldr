@@ -9,6 +9,17 @@
     @include('includes.message')
 
     <div>
+        <label>Favorited: {{ $track_fav_count }}</label>
+        @if($track_is_fav == 0)
+            <a href="{{ route('favorite.add', ['type_name' => 'track', 'type_id' => $track->id]) }}">Add</a>
+        @else
+            <a href="{{ route('favorite.remove', ['type_name' => 'track', 'type_id' => $track->id]) }}">Remove</a>
+        @endif
+    </div>
+
+    <p>------------------------------------------------</p>
+
+    <div>
         <label>{{ $track->c_cim }}</label>
     </div>
     <div>
@@ -60,7 +71,7 @@
     <p>Comments</p>
 
     @if(count($posts) > 0)
-        @foreach($posts->all() as $post)
+        @foreach($posts as $post)
             <article data-postid="{{ $post->id }}">
                 <label>{{ $post->c_felhnev }} - {{ $post->created_at }}</label>
 
@@ -68,7 +79,13 @@
                     <button type="button" name="post-reply">Reply</button>
 
                     @if($user == Auth::user())
-                        <a name="post-delete" href="{{ route('post.remove', ['post_id' => $post->id]) }}">Remove</a>
+                        <a name="post-delete" href="{{ route('post.remove', ['post_id' => $post->id]) }}">Remove</a><br>
+                    @else
+                        <br>
+                    @endif
+
+                    @if(is_null($post->d_jelol_datum) and $user != Auth::user())
+                        <a href="{{ route('favorite.add', ['type_name' => 'post', 'type_id' => $post->id]) }}">Upvote</a>
                     @endif
                 @endif
 

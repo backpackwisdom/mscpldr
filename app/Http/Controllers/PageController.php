@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Favorite;
 use App\Post;
 use DB;
 use Auth;
@@ -79,16 +80,49 @@ class PageController extends Controller {
     public function getTrackPage($track_id, $track_slug) {
         $track = Track::where('id', $track_id)->first();
         $user = User::where('id', $track->n_felhid)->first();
+        $track_is_fav = Favorite::where([
+            ['c_tipus', '=', 'track'],
+            ['n_tipus_id', '=', $track_id],
+            ['n_felh_id', '=', $user->id]
+        ])->count();
 
-        $posts = DB::table('posts')
-            ->join('users', 'posts.n_felh_id', '=', 'users.id')
-            ->select('posts.*', 'users.c_felhnev')
-            ->where('posts.n_szam_id', '=', $track_id)
-            ->orderBy('posts.created_at', 'desc')
-            ->get();
+        $track_fav_count = Favorite::where([
+            ['c_tipus', '=', 'track'],
+            ['n_tipus_id', '=', $track_id]
+        ])->count();
+
+        if(Auth::user()) {
+            // if authenticated: posts + favorites for the current user
+            $posts = DB::select('
+          select posts.*, users.c_felhnev, favorites.d_jelol_datum 
+            from 
+              posts 
+                join 
+              users on posts.n_felh_id = users.id 
+                left join 
+              favorites on favorites.n_tipus_id = posts.id and favorites.c_tipus = ? and favorites.n_felh_id = ? 
+           where posts.n_szam_id = ?
+           order by posts.created_at desc',
+                ['post', Auth::user()->id, $track_id]
+            );
+        } else {
+            // if not, just posts
+            $posts = DB::select('
+          select posts.*, users.c_felhnev 
+            from 
+              posts 
+                join 
+              users on posts.n_felh_id = users.id 
+           where posts.n_szam_id = ?
+           order by posts.created_at desc',
+                [$track_id]
+            );
+        }
 
         return view('track', [
             'track' => $track,
+            'track_fav_count' => $track_fav_count,
+            'track_is_fav' => $track_is_fav,
             'user' => $user,
             'posts' => $posts
         ]);

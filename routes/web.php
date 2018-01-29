@@ -119,6 +119,16 @@ Route::group(['middleware' => ['web']], function() {
             'uses' => 'PostController@getDeletePost',
             'as' => 'post.remove'
         ]);
+
+        Route::get('/add-favorite/{fav_type}/{type_id}', [
+            'uses' => 'FavoriteController@postAddFavorite',
+            'as' => 'favorite.add'
+        ]);
+
+        Route::get('/remove-favorite/{fav_type}/{type_id}', [
+            'uses' => 'FavoriteController@postRemoveFavorite',
+            'as' => 'favorite.remove'
+        ]);
     });
 
     // guest users

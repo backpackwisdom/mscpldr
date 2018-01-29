@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Favorite;
+use App\Post;
 use App\Track;
 use App\User;
 use Auth;
+use FFMpeg\FFMpeg;
 use Storage;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
+
+ini_set('max_execution_time', '300');
 
 class TrackController extends Controller {
     public function generateRandomString($length = 10) {
@@ -89,6 +94,30 @@ class TrackController extends Controller {
 
         // inserting track
         Storage::disk('users')->put($track_folder.'/'.$track_name, File::get($track_file));
+        $full_path = storage_path().'\\users\\'.$user->c_felhnev.'\\uploads\\'.$track->id;
+
+        // changing bitrate from 320kbps to 192kbps
+        $ffmpeg = FFMpeg::create([
+            'ffmpeg.binaries' => 'C:/ffmpeg/bin/ffmpeg.exe',
+            'ffprobe.binaries' => 'C:/ffmpeg/bin/ffprobe.exe',
+            'timeout' => 0
+        ]);
+
+        // for debugging purposes
+        /*$ffmpeg->getFFMpegDriver()->listen(new \Alchemy\BinaryDriver\Listeners\DebugListener());
+        $ffmpeg->getFFMpegDriver()->on('debug', function ($message) {
+            echo $message."\n";
+        });*/
+        $audio = $ffmpeg->open($full_path.'\\'.$track_name);
+        $format = new \FFMpeg\Format\Audio\Mp3();
+        $format->setAudioKiloBitrate(160);
+        $audio->save($format, storage_path().'\\'.$track_name); // copying it to elsewhere, because replacing does not work
+
+        // deleting the original file
+        $this->deleteFiles($full_path.'\\*', 'mp3');
+
+        // replacing with the converted file
+        rename(storage_path().'\\'.$track_name, $full_path.'\\'.$track_name);
 
         // inserting cover
         if($cover_name == 'nocover.jpg') {
@@ -176,7 +205,11 @@ class TrackController extends Controller {
         $this->deleteFiles($path.'\\*');
         rmdir($path);
 
-        // deleting row from the database
+        // deleting rows from the database
+        $posts_to_delete = Post::where('n_szam_id', $track_id)->pluck('id')->toArray();
+        Favorite::whereIn('n_tipus_id', $posts_to_delete)->where('c_tipus', 'post')->delete();
+        Favorite::where([['n_tipus_id', '=', $track_id], ['c_tipus', '=', 'track']])->delete();
+        Post::whereIn('id', $posts_to_delete)->delete();
         $track->delete();
 
         return redirect()->route('dashboard')->with([

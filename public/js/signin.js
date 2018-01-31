@@ -13,11 +13,15 @@ $(document).ready(function() {
                 var errors = resp.responseJSON.errors;
 
                 if(errors.hasOwnProperty('c_username')) {
-                    console.log(errors.c_username[0]);
+                    showFormError('#input_username', errors.c_username[0]);
+                } else {
+                    hideFormError('#input_username');
                 }
 
                 if(errors.hasOwnProperty('c_password')) {
-                    console.log(errors.c_password[0]);
+                    showFormError('#input_password', errors.c_password[0]);
+                } else {
+                    hideFormError('#input_password');
                 }
             }
         });

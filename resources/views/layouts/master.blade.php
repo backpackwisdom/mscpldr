@@ -7,6 +7,7 @@
         <link rel="stylesheet" href="{{ URL::to('css/bootstrap.css') }}">
         <link rel="stylesheet" href="{{ URL::to('css/bootstrap-grid.css') }}">
         <link rel="stylesheet" href="{{ URL::to('css/style.css') }}">
+        @yield('page-css')
     </head>
     <body>
         @include('includes.header')

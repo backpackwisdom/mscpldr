@@ -1,0 +1,33 @@
+input, button {
+    padding: 3px 10px !important;
+}
+
+#form-signin button {
+    width: 100%;
+    font-size: 20px;
+}
+
+#signin-intro {
+    margin-top: 10px;
+}
+
+.card {
+    -webkit-box-shadow: 0.25px 1px 4px 1px rgba(107,107,107,1);
+    -moz-box-shadow: 0.25px 1px 4px 1px rgba(107,107,107,1);
+    box-shadow: 0.25px 1px 4px 1px rgba(107,107,107,1);
+}
+
+.card h5 {
+    background: #893c3c;
+    color: white;
+    padding: 8px 20px;
+}
+
+.card-body h4 {
+    text-align: center;
+}
+
+.error-msg {
+    color: #d81e1e;
+    font-size: 13px;
+}

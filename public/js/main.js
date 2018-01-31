@@ -26,3 +26,18 @@ function checkInputFilesize(input, limit) {
 
     return false;
 }
+
+// show form error messages
+function showFormError(id, msg) {
+    if(!($(id).find('p').length)) {
+        var msg_username = '<p class="error-msg">' + msg +'</p>';
+        $(id).append(msg_username);
+        $(id).find('.form-control').addClass('is-invalid');
+    }
+}
+
+// hide form error messages
+function hideFormError(id) {
+    $(id).find('p').remove();
+    $(id).find('.form-control').removeClass('is-invalid');
+}

@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
 class PostController extends Controller {
-    public function postCreatePost(Request $request, $track_id) {
+    public function postCreatePost(Request $request, $post_type, $type_id) {
         $this->validate($request, [
             'c_szoveg' => 'required|max:1000'
         ], [
@@ -21,7 +21,8 @@ class PostController extends Controller {
         $user = Auth::user();
 
         $post->n_felh_id = $user->id;
-        $post->n_szam_id = $track_id;
+        $post->c_tipus = $post_type;
+        $post->n_tipus_id = $type_id; // track or album ID
         $post->c_szoveg = $request['c_szoveg'];
 
         $post->save();

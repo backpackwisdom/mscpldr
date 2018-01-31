@@ -28,9 +28,19 @@ Route::group(['middleware' => ['web']], function() {
         'as' => 'track.get'
     ]);
 
-    Route::get('cover/{filename}', [
+    Route::get('album/{album_id}/{album_slug}', [
+        'uses' => 'PageController@getAlbumPage',
+        'as' => 'album.get'
+    ]);
+
+    Route::get('track-cover/{filename}', [
         'uses' => 'TrackController@getTrackCover',
         'as' => 'track.cover'
+    ]);
+
+    Route::get('album-cover/{filename}', [
+        'uses' => 'AlbumController@getAlbumCover',
+        'as' => 'album.cover'
     ]);
 
     Route::get('track/{filename}', [
@@ -110,7 +120,7 @@ Route::group(['middleware' => ['web']], function() {
             'as' => 'track-remove.get'
         ]);
 
-        Route::post('/post-create/{track_id}', [
+        Route::post('/post-create/{post_type}/{type_id}', [
             'uses' => 'PostController@postCreatePost',
             'as' => 'post.create'
         ]);
@@ -128,6 +138,31 @@ Route::group(['middleware' => ['web']], function() {
         Route::get('/remove-favorite/{fav_type}/{type_id}', [
             'uses' => 'FavoriteController@postRemoveFavorite',
             'as' => 'favorite.remove'
+        ]);
+
+        Route::get('/create-album', [
+            'uses' => 'PageController@getAlbumCreatePage',
+            'as' => 'album-create.get'
+        ]);
+
+        Route::post('/create-album', [
+            'uses' => 'AlbumController@postCreateAlbum',
+            'as' => 'album-create.post'
+        ]);
+
+        Route::get('/edit-album/{album_id}', [
+            'uses' => 'PageController@getEditAlbum',
+            'as' => 'album-edit.get'
+        ]);
+
+        Route::post('/edit-album/{album_id}', [
+            'uses' => 'AlbumController@postEditAlbum',
+            'as' => 'album-edit.post'
+        ]);
+
+        Route::get('/remove-album/{album_id}', [
+            'uses' => 'AlbumController@getRemoveAlbum',
+            'as' => 'album.remove'
         ]);
     });
 

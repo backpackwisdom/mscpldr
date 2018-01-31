@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Album;
+use App\Albumtrack;
 use App\Favorite;
 use App\Post;
 use DB;
@@ -33,12 +35,14 @@ class PageController extends Controller {
     }
 
     public function getDashboardPage() {
-        $latest_users = User::orderBy('id', 'desc')->take(5)->get();
+        $latest_users = User::orderBy('id', 'desc')->get();
         $latest_tracks = Track::orderBy('id', 'desc')->get();
+        $latest_albums = Album::orderby('id', 'desc')->get();
 
         return view('dashboard', [
             'users' => $latest_users,
-            'tracks' => $latest_tracks
+            'tracks' => $latest_tracks,
+            'albums' => $latest_albums
         ]);
     }
 
@@ -46,6 +50,17 @@ class PageController extends Controller {
         $genres = Genre::orderBy('c_mufajnev', 'asc')->get();
 
         return view('upload', [
+            'genres' => $genres
+        ]);
+    }
+
+    public function getAlbumCreatePage() {
+        $user = Auth::user();
+        $genres = Genre::orderBy('c_mufajnev', 'asc')->get();
+        $tracks = Track::where('n_felhid', $user->id)->get();
+
+        return view('album-create', [
+            'tracks' => $tracks,
             'genres' => $genres
         ]);
     }
@@ -80,10 +95,12 @@ class PageController extends Controller {
     public function getTrackPage($track_id, $track_slug) {
         $track = Track::where('id', $track_id)->first();
         $user = User::where('id', $track->n_felhid)->first();
+        $auth_user = Auth::user();
+
         $track_is_fav = Favorite::where([
             ['c_tipus', '=', 'track'],
             ['n_tipus_id', '=', $track_id],
-            ['n_felh_id', '=', $user->id]
+            ['n_felh_id', '=', $auth_user->id]
         ])->count();
 
         $track_fav_count = Favorite::where([
@@ -91,7 +108,7 @@ class PageController extends Controller {
             ['n_tipus_id', '=', $track_id]
         ])->count();
 
-        if(Auth::user()) {
+        if($auth_user) {
             // if authenticated: posts + favorites for the current user
             $posts = DB::select('
           select posts.*, users.c_felhnev, favorites.d_jelol_datum 
@@ -101,9 +118,9 @@ class PageController extends Controller {
               users on posts.n_felh_id = users.id 
                 left join 
               favorites on favorites.n_tipus_id = posts.id and favorites.c_tipus = ? and favorites.n_felh_id = ? 
-           where posts.n_szam_id = ?
+           where posts.c_tipus = \'track\' and posts.n_tipus_id = ?
            order by posts.created_at desc',
-                ['post', Auth::user()->id, $track_id]
+                ['post', $auth_user->id, $track_id]
             );
         } else {
             // if not, just posts
@@ -113,7 +130,7 @@ class PageController extends Controller {
               posts 
                 join 
               users on posts.n_felh_id = users.id 
-           where posts.n_szam_id = ?
+           where posts.c_tipus = \'track\' and posts.n_tipus_id = ?
            order by posts.created_at desc',
                 [$track_id]
             );
@@ -141,6 +158,85 @@ class PageController extends Controller {
 
         return view('track-edit', [
             'track' => $track,
+            'genres' => $genres
+        ]);
+    }
+
+    public function getAlbumPage($album_id, $album_slug) {
+        $album = Album::where('id', $album_id)->first();
+        $tracks_to_display = Albumtrack::where('n_album_id', $album_id)->pluck('n_szam_id')->toArray();
+        $tracks = Track::whereIn('id', $tracks_to_display)->get();
+        $user = User::where('id', $album->n_felh_id)->first();
+        $genre = Genre::where('id', $album->n_mufaj_id)->first();
+        $auth_user = Auth::user();
+
+        $album_is_fav = Favorite::where([
+            ['c_tipus', '=', 'album'],
+            ['n_tipus_id', '=', $album_id],
+            ['n_felh_id', '=', $auth_user->id]
+        ])->count();
+
+        $album_fav_count = Favorite::where([
+            ['c_tipus', '=', 'album'],
+            ['n_tipus_id', '=', $album_id]
+        ])->count();
+
+        if(Auth::user()) {
+            // if authenticated: posts + favorites for the current user
+            $posts = DB::select('
+          select posts.*, users.c_felhnev, favorites.d_jelol_datum 
+            from 
+              posts 
+                join 
+              users on posts.n_felh_id = users.id 
+                left join 
+              favorites on favorites.n_tipus_id = posts.id and favorites.c_tipus = ? and favorites.n_felh_id = ? 
+           where posts.c_tipus = \'album\' and posts.n_tipus_id = ?
+           order by posts.created_at desc',
+                ['post', $auth_user->id, $album_id]
+            );
+        } else {
+            // if not, just posts
+            $posts = DB::select('
+          select posts.*, users.c_felhnev 
+            from 
+              posts 
+                join 
+              users on posts.n_felh_id = users.id 
+           where posts.c_tipus = \'album\' and posts.n_tipus_id = ?
+           order by posts.created_at desc',
+                [$album_id]
+            );
+        }
+
+        return view('album', [
+            'album' => $album,
+            'tracks' => $tracks,
+            'user' => $user,
+            'genre' => $genre,
+            'album_is_fav' => $album_is_fav,
+            'album_fav_count' => $album_fav_count,
+            'posts' => $posts
+        ]);
+    }
+
+    public function getEditAlbum($album_id) {
+        $album = Album::where('id', $album_id)->first();
+        $albumtracks = Albumtrack::where('n_album_id', $album_id)->pluck('n_szam_id')->toArray();
+        $genres = Genre::orderBy('c_mufajnev', 'asc')->get();
+        $user = User::where('id', $album->n_felh_id)->first();
+        $tracks = Track::where('n_felhid', $user->id)->get();
+
+        if($user != Auth::user()) {
+            return redirect()->with([
+                'message' => 'You have no access to the page.'
+            ]);
+        }
+
+        return view('album-edit', [
+            'album' => $album,
+            'albumtracks' => $albumtracks,
+            'tracks' => $tracks,
             'genres' => $genres
         ]);
     }

@@ -19,6 +19,13 @@
     @endif
 
     <p>Latest albums</p>
+    @if(count($albums) > 0)
+        <ul>
+            @foreach($albums->all() as $album)
+                <li><a href="{{ route('album.get', ['album_id' => $album->id, 'album_slug' => $album->c_albumlink]) }}">{{ $album->c_eloado }} - {{ $album->c_albumnev }}</a></li>
+            @endforeach
+        </ul>
+    @endif
 
     <p>Latest users</p>
     @if(count($users) > 0)

@@ -53,6 +53,11 @@ return [
             'root' => storage_path() . '/users'
         ],
 
+        'albums' => [
+            'driver' => 'local',
+            'root' => storage_path() . '/albums'
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

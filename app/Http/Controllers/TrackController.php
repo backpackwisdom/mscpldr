@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
+use DB;
 
 ini_set('max_execution_time', '300');
 
@@ -57,81 +58,101 @@ class TrackController extends Controller {
         ]);
 
         $user = Auth::user();
-        $track = new Track();
 
-        // generating track name
-        $track_extension = $request->file('c_szam')->getClientOriginalExtension();
-        $track_name = $this->generateRandomString(20).'.'.$track_extension;
+        DB::beginTransaction();
 
-        // generating cover name
-        if($request->hasFile('c_borito')) {
-            $cover_extension = $request->file('c_borito')->getClientOriginalExtension();
-            $cover_name = $this->generateRandomString(12).'.'.$cover_extension;
-        } else {
-            $cover_name = 'nocover.jpg';
+        try {
+            $track = new Track();
+
+            // generating track name
+            $track_extension = $request->file('c_szam')->getClientOriginalExtension();
+            $track_name = $this->generateRandomString(20).'.'.$track_extension;
+
+            // generating cover name
+            if($request->hasFile('c_borito')) {
+                $cover_extension = $request->file('c_borito')->getClientOriginalExtension();
+                $cover_name = $this->generateRandomString(12).'.'.$cover_extension;
+            } else {
+                $cover_name = 'nocover.jpg';
+            }
+
+            // saving data
+            $track->n_felhid = $user->id;
+            $track->c_cim = $request['c_cim'];
+            $track->c_eloado = $request['c_eloado'];
+            $track->c_album = $request['c_album'];
+            $track->c_zenenev = $track_name;
+            $track->c_zenelink = str_slug($request['c_cim'], '-');
+            $track->c_boritonev = $cover_name;
+            $track->n_kiadev = (int)$request['n_kiadev'];
+            $track->c_leiras = $request['c_leiras'];
+            $track->n_mufajazon = (int)$request['n_mufajazon'];
+
+            $track->save();
+
+            // creating directory
+            $track = Track::where('n_felhid', $user->id)->orderBy('id', 'desc')->first();
+            Storage::disk('users')->makeDirectory($user->c_felhnev.'/uploads/'.$track->id);
+            $track_folder = $user->c_felhnev.'/uploads/'.$track->id;
+            $track_file = $request->file('c_szam');
+            $cover_file = $request->file('c_borito');
+
+            // inserting track
+            Storage::disk('users')->put($track_folder.'/'.$track_name, File::get($track_file));
+            $full_path = storage_path().'\\users\\'.$user->c_felhnev.'\\uploads\\'.$track->id;
+
+            // changing bitrate from 320kbps to 192kbps
+            $ffmpeg = FFMpeg::create([
+                'ffmpeg.binaries' => 'C:/ffmpeg/bin/ffmpeg.exe',
+                'ffprobe.binaries' => 'C:/ffmpeg/bin/ffprobe.exe',
+                'timeout' => 0
+            ]);
+
+            // for debugging purposes
+            /*$ffmpeg->getFFMpegDriver()->listen(new \Alchemy\BinaryDriver\Listeners\DebugListener());
+            $ffmpeg->getFFMpegDriver()->on('debug', function ($message) {
+                echo $message."\n";
+            });*/
+            $audio = $ffmpeg->open($full_path.'\\'.$track_name);
+            $format = new \FFMpeg\Format\Audio\Mp3();
+            $format->setAudioKiloBitrate(160);
+            $audio->save($format, storage_path().'\\'.$track_name); // copying it to elsewhere, because replacing does not work
+
+            // deleting the original file
+            $this->deleteFiles($full_path.'\\*', 'mp3');
+
+            // replacing with the converted file
+            rename(storage_path().'\\'.$track_name, $full_path.'\\'.$track_name);
+
+            // inserting cover
+            if($cover_name == 'nocover.jpg') {
+                $orig = storage_path().'\\pub\\nocover.jpg';
+                $dest = storage_path().'\\users\\'.$user->c_felhnev.'\\uploads\\'.$track->id.'\\nocover.jpg';
+
+                if(copy($orig, $dest)) {}
+            } else {
+                Storage::disk('users')->put($track_folder.'/'.$cover_name, File::get($cover_file));
+            }
+
+            DB::commit();
+
+            Session::flash("message", "Song was successfully uploaded!");
+
+            return "success";
+        } catch (\Exception $e) {
+            $track = Track::where('n_felh_id', $user->id)->orderBy('created_at', 'desc')->first();
+
+            if(!empty($track)) {
+                $dir_to_delete = storage_path().'\\users\\'.$user->c_felhnev.'\\uploads\\'.$track->id;
+
+                if(file_exists($dir_to_delete)) {
+                    $this->deleteFiles($dir_to_delete);
+                    rmdir($dir_to_delete);
+                }
+            }
+
+            DB::rollback();
         }
-
-        // saving data
-        $track->n_felhid = $user->id;
-        $track->c_cim = $request['c_cim'];
-        $track->c_eloado = $request['c_eloado'];
-        $track->c_album = $request['c_album'];
-        $track->c_zenenev = $track_name;
-        $track->c_zenelink = str_slug($request['c_cim'], '-');
-        $track->c_boritonev = $cover_name;
-        $track->n_kiadev = (int)$request['n_kiadev'];
-        $track->c_leiras = $request['c_leiras'];
-        $track->n_mufajazon = (int)$request['n_mufajazon'];
-
-        $track->save();
-
-        // creating directory
-        $track = Track::where('n_felhid', $user->id)->orderBy('id', 'desc')->first();
-        Storage::disk('users')->makeDirectory($user->c_felhnev.'/uploads/'.$track->id);
-        $track_folder = $user->c_felhnev.'/uploads/'.$track->id;
-        $track_file = $request->file('c_szam');
-        $cover_file = $request->file('c_borito');
-
-        // inserting track
-        Storage::disk('users')->put($track_folder.'/'.$track_name, File::get($track_file));
-        $full_path = storage_path().'\\users\\'.$user->c_felhnev.'\\uploads\\'.$track->id;
-
-        // changing bitrate from 320kbps to 192kbps
-        $ffmpeg = FFMpeg::create([
-            'ffmpeg.binaries' => 'C:/ffmpeg/bin/ffmpeg.exe',
-            'ffprobe.binaries' => 'C:/ffmpeg/bin/ffprobe.exe',
-            'timeout' => 0
-        ]);
-
-        // for debugging purposes
-        /*$ffmpeg->getFFMpegDriver()->listen(new \Alchemy\BinaryDriver\Listeners\DebugListener());
-        $ffmpeg->getFFMpegDriver()->on('debug', function ($message) {
-            echo $message."\n";
-        });*/
-        $audio = $ffmpeg->open($full_path.'\\'.$track_name);
-        $format = new \FFMpeg\Format\Audio\Mp3();
-        $format->setAudioKiloBitrate(160);
-        $audio->save($format, storage_path().'\\'.$track_name); // copying it to elsewhere, because replacing does not work
-
-        // deleting the original file
-        $this->deleteFiles($full_path.'\\*', 'mp3');
-
-        // replacing with the converted file
-        rename(storage_path().'\\'.$track_name, $full_path.'\\'.$track_name);
-
-        // inserting cover
-        if($cover_name == 'nocover.jpg') {
-            $orig = storage_path().'\\pub\\nocover.jpg';
-            $dest = storage_path().'\\users\\'.$user->c_felhnev.'\\uploads\\'.$track->id.'\\nocover.jpg';
-
-            if(copy($orig, $dest)) {}
-        } else {
-            Storage::disk('users')->put($track_folder.'/'.$cover_name, File::get($cover_file));
-        }
-
-        Session::flash("message", "Song was successfully uploaded!");
-
-        return "success";
     }
 
     public function postEditTrack(Request $request, $track_id) {

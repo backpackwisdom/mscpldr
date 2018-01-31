@@ -58,7 +58,7 @@
     <button type="button" name="post-create">Create new post</button>
 
     @if(Auth::user())
-        <form action="{{ route('post.create', ['track_id' => $track->id]) }}" method="post" id="form-create-post" hidden>
+        <form action="{{ route('post.create', ['post_type' => 'track', 'type_id' => $track->id]) }}" method="post" id="form-create-post" hidden>
             <textarea name="c_szoveg" cols="50" rows="10"></textarea>
             <input type="hidden" name="_token" value="{{ Session::token() }}">
             <button type="submit">Send</button>
@@ -101,7 +101,7 @@
 
 @section('page-js')
     <script>
-        var url_createpost = '{{ route('post.create', ['track_id' => $track->id]) }}';
+        var url_createpost = '{{ route('post.create', ['post_type' => 'track', 'type_id' => $track->id]) }}';
     </script>
     <script src="{{ URL::to('js/track.js') }}"></script>
 @endsection

@@ -23,7 +23,7 @@ class CreateTracksTable extends Migration
             $table->string('c_zenelink');
             $table->string('c_boritonev');
             $table->integer('n_kiadev');
-            $table->text('c_leiras');
+            $table->text('c_leiras')->nullable();
             $table->integer('n_mufajazon');
             $table->timestamps();
             $table->foreign('n_felhid')->references('id')->on('users');

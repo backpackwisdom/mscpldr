@@ -16,12 +16,12 @@ class CreatePostsTable extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('n_felh_id');
-            $table->integer('n_szam_id');
+            $table->string('c_tipus');
+            $table->integer('n_tipus_id');
             $table->integer('n_valasz_id')->nullable();
             $table->timestamps();
             $table->text('c_szoveg');
             $table->foreign('n_felh_id')->references('id')->on('users');
-            $table->foreign('n_szam_id')->references('id')->on('tracks');
         });
     }
 

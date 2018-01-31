@@ -10,6 +10,10 @@
                     <li><a href="{{ route('upload.get') }}">Upload</a></li>
                 @endif
 
+                @if(!Route::is('album-create.get'))
+                    <li><a href="{{ route('album-create.get') }}">Create album</a></li>
+                @endif
+
                 <li>{{ Auth::user()->c_felhnev }}
                     <ul>
                         <li><a href="{{ route('settings.get') }}">Settings</a></li>

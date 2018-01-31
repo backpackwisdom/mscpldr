@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-    @include('includes.header')
     @include('includes.message')
 
     <p>Followed</p>
@@ -29,6 +28,4 @@
             </div>
         @endforeach
     @endif
-
-    @include('includes.footer')
 @endsection

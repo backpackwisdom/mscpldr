@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-    @include('includes.header')
     @include('includes.message')
     <p>You can change your account settings here.</p>
 
@@ -28,8 +27,6 @@
     </form>
 
     <img src="{{ route('avatar.get', ['user_id' => $user->id, 'filename' => $user->c_avatarlink]) }}" width="100" height="100">
-
-    @include('includes.footer')
 @endsection
 
 @section('page-js')

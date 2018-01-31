@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-    @include('includes.header')
     @include('includes.message')
 
     <p>Uploading music</p>
@@ -52,8 +51,6 @@
         <input type="hidden" name="_token" value="{{ Session::token() }}">
         <button type="submit">Upload</button>
     </form>
-
-    @include('includes.footer')
 @endsection
 
 @section('page-js')

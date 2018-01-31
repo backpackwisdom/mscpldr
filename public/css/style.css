@@ -1,0 +1,63 @@
+*, input, button {
+    font-family: 'Kalam', cursive;
+    text-shadow: 0.33px 0.33px 0.33px rgba(150, 150, 150, 0.8);
+}
+
+/* COMMON */
+.cm-aligning {
+    margin-top: 30px;
+}
+
+/* NAVBAR */
+nav {
+    padding: 1px 35px !important;
+}
+
+.navbar,
+.navbar .dropdown-menu {
+    background: #e02121;
+    opacity: 0.8;
+}
+
+.navbar a,
+.navbar .dropdown-menu a {
+    color: white;
+}
+
+.navbar a:hover {
+    color: #e2acac;
+}
+
+.navbar .dropdown-menu a {
+    padding: 0px 10px;
+}
+
+.navbar .dropdown-menu a:hover {
+    color: #dd1111;
+}
+
+.custom-toggler.navbar-toggler {
+    border-color: rgb(255, 255, 255);
+}
+
+.custom-toggler .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,255,255, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+}
+
+/* BODY */
+body {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
+/* FOOTER */
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    background: black;
+    color: white;
+    padding: 3px;
+    opacity: 0.8;
+}

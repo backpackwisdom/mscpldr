@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-    @include('includes.header')
     @include('includes.message')
     <p>To change your password, please type in the right data.</p>
 
@@ -25,7 +24,6 @@
         <input type="hidden" name="_token" value="{{ Session::token() }}">
         <button type="submit">Renew password</button>
     </form>
-    @include('includes.footer')
 @endsection
 
 @section('page-js')

@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-    @include('includes.header')
     @include('includes.message')
 
     <div>
@@ -95,8 +94,6 @@
     @else
         <p>There are no comments.</p>
     @endif
-
-    @include('includes.footer')
 @endsection
 
 @section('page-js')

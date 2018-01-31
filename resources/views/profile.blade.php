@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-    @include('includes.header')
     @include('includes.message')
     <p>{{ $user->c_felhnev }}</p>
 
@@ -35,6 +34,4 @@
             </form>
         @endif
     @endif
-
-    @include('includes.footer')
 @endsection

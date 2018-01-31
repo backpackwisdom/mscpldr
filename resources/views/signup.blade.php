@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-    @include('includes.header')
     @include('includes.message')
     <p>After signing up, you'll be redirected to the home page to log in.</p>
     <form action="{{ route('signup.post') }}" method="post" id="form-signup">
@@ -28,7 +27,6 @@
         <button type="submit">Submit</button>
         <input type="hidden" name="_token" value="{{ Session::token() }}">
     </form>
-    @include('includes.footer')
 @endsection
 
 @section('page-js')

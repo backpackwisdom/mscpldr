@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-    @include('includes.header')
     @include('includes.message')
 
     <p>Creating album</p>
@@ -71,8 +70,6 @@
 
         </div>
     </form>
-
-    @include('includes.footer')
 @endsection
 
 @section('page-js')

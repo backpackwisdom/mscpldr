@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-    @include('includes.header')
     @include('includes.message')
     <p>Log in to start exploring!</p>
     <form action="{{ route('signin.post') }}" method="post" id="form-signin">
@@ -28,7 +27,6 @@
         </div>
         <button type="submit">Send</button>
     </form>
-    @include('includes.footer')
 @endsection
 
 @section('page-js')

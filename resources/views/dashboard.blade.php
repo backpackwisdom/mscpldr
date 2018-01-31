@@ -5,7 +5,6 @@
 @endsection
 
 @section('content')
-    @include('includes.header')
     @include('includes.message')
     Welcome to the dashboard, {{ Auth::user()->c_felhnev }}!
 

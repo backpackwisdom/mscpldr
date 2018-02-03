@@ -17,7 +17,7 @@ class CreateFavoritesTable extends Migration
             $table->increments('id');
             $table->string('c_tipus');
             $table->integer('n_tipus_id');
-            $table->integer('n_felh_id');
+            $table->integer('n_felh_id')->unsigned();
             $table->timestamp('d_jelol_datum')->useCurrent();
             $table->foreign('n_felh_id')->references('id')->on('users');
         });

@@ -15,8 +15,8 @@ class CreateAlbumtracksTable extends Migration
     {
         Schema::create('albumtracks', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('n_album_id');
-            $table->integer('n_szam_id');
+            $table->integer('n_album_id')->unsigned();
+            $table->integer('n_szam_id')->unsigned();
             $table->foreign('n_album_id')->references('id')->on('albums');
             $table->foreign('n_szam_id')->references('id')->on('tracks');
         });

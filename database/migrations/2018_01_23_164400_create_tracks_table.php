@@ -15,7 +15,7 @@ class CreateTracksTable extends Migration
     {
         Schema::create('tracks', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('n_felhid');
+            $table->integer('n_felhid')->unsigned();
             $table->string('c_cim', 256);
             $table->string('c_eloado', 256);
             $table->string('c_album', 256);
@@ -24,7 +24,7 @@ class CreateTracksTable extends Migration
             $table->string('c_boritonev');
             $table->integer('n_kiadev');
             $table->text('c_leiras')->nullable();
-            $table->integer('n_mufajazon');
+            $table->integer('n_mufajazon')->unsigned();
             $table->timestamps();
             $table->foreign('n_felhid')->references('id')->on('users');
             $table->foreign('n_mufajazon')->references('id')->on('genres');

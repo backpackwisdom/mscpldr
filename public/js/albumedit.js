@@ -1,11 +1,52 @@
 var removeButton = '<button type="button" name="remove-cover">X</button>';
 var avatarChanged = false;
 
+// append remove button if there's an album cover
 if(coverName != 'nocover.jpg') {
     $('#cover').append(removeButton);
 }
 
+// highlight previous album tracks
+$('li.list-group-item').each(function(i, elem) {
+    var checked = (typeof $(elem).find('input').attr('checked') == 'undefined') ? false : true;
+
+    if(checked == true) {
+        $(this).addClass('active');
+        $(this).append($('<i class="fas fa-check"></i>').hide().fadeIn(300));
+    }
+});
+
 $(document).ready(function() {
+    // for filtering tracks
+    var filterInput = document.getElementById('input-filter-list');
+
+    filterInput.addEventListener('keyup', function() {
+        var filterValue = document.getElementById('input-filter-list').value.toUpperCase();
+        var ul = document.getElementById('tracks');
+        var li = ul.querySelectorAll('li.list-group-item');
+
+        for(var i = 0; i < li.length; i++) {
+            if(li[i].innerHTML.toUpperCase().indexOf(filterValue) > -1) {
+                li[i].style.display = '';
+            } else {
+                li[i].style.display = 'none';
+            }
+        }
+    });
+
+    // highlighting + checkbox handling
+    $('li.list-group-item').click(function() {
+        if(!($(this).hasClass('active'))) {
+            $(this).addClass('active');
+            $(this).find('input').attr('checked', true);
+            $(this).append($('<i class="fas fa-check"></i>').hide().fadeIn(300));
+        } else {
+            $(this).removeClass('active');
+            $(this).find('input').removeAttr('checked');
+            $(this).find('i').fadeOut(300).remove();
+        }
+    });
+
     // input - avatar - remove button handling
     $('input[name="c_borito"]').change(function() {
         var imageHidden = $('img').is('[hidden]');

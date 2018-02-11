@@ -15,19 +15,27 @@ $(document).ready(function() {
                 var errors = resp.responseJSON.errors;
 
                 if(errors.hasOwnProperty('c_email')) {
-                    console.log(errors.c_email[0]);
+                    showFormError('#input_email', errors.c_email[0]);
+                } else {
+                    hideFormError('#input_email');
                 }
 
                 if(errors.hasOwnProperty('c_username')) {
-                    console.log(errors.c_username[0]);
+                    showFormError('#input_username', errors.c_username[0]);
+                } else {
+                    hideFormError('#input_username');
                 }
 
                 if(errors.hasOwnProperty('c_password')) {
-                    console.log(errors.c_password[0]);
+                    showFormError('#input_password', errors.c_password[0]);
+                } else {
+                    hideFormError('#input_password');
                 }
 
                 if(errors.hasOwnProperty('c_passconf')) {
-                    console.log(errors.c_passconf[0]);
+                    showFormError('#input_passconf', errors.c_passconf[0]);
+                } else {
+                    hideFormError('#input_passconf');
                 }
             }
         });

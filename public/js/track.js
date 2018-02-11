@@ -1,4 +1,15 @@
 $(document).ready(function() {
+    // enlarge cover
+    $('#track-cover').click(function() {
+        $('#track-cover-modal').show();
+        $('#modal-image').attr('src', $(this).attr('src'));
+    });
+
+    // close cover
+    $('span[class="close"]').click(function() {
+        $('#track-cover-modal').hide();
+    });
+
     // enable post creating
     $('button[name="post-create"]').click(function() {
         $(this).attr('disabled', true);

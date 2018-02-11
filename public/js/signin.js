@@ -1,4 +1,12 @@
 $(document).ready(function() {
+    // sliding latest tracks
+    $('.all-tracks').slick({
+        infinite: true,
+        slidesToShow: (count_tracks < 5) ? count_tracks : 5,
+        slidesToScroll: 1
+    });
+
+    // form validation
     $('#form-signin').submit(function(e) {
         e.preventDefault();
 
@@ -7,7 +15,9 @@ $(document).ready(function() {
             url: url,
             data: $(this).serialize(),
             success: function(resp) {
-                window.location.href = 'dashboard';
+                if(resp == "success") {
+                    window.location = redirect_to;
+                }
             },
             error: function(resp) {
                 var errors = resp.responseJSON.errors;

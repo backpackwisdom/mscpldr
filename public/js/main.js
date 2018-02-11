@@ -10,7 +10,7 @@ function setTempURL(input, appendTo) {
 
         reader.onload = function(e) {
             $(appendTo).attr('src', e.target.result);
-        }
+        };
 
         reader.readAsDataURL(input.files[0]);
     }
@@ -36,8 +36,21 @@ function showFormError(id, msg) {
     }
 }
 
+// show error without highlighting any input field
+function showFormErrorNotInput(id, msg) {
+    if(!($(id).find('p').length)) {
+        var msg_username = '<p class="error-msg">' + msg +'</p>';
+        $(id).append(msg_username);
+    }
+}
+
 // hide form error messages
 function hideFormError(id) {
     $(id).find('p').remove();
     $(id).find('.form-control').removeClass('is-invalid');
+}
+
+// hide error - not input field
+function hideFormErrorNotInput(id) {
+    $(id).find('p').remove();
 }

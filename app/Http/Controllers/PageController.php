@@ -12,11 +12,28 @@ use App\Follower;
 use App\User;
 use App\Genre;
 use App\Track;
+use Illuminate\Support\Facades\Session;
 
 class PageController extends Controller {
+    public function getHomePage() {
+        $latest_tracks = Track::orderBy('id', 'desc')->take(10)->get();
+        $count_latest_tracks = Track::orderBy('id', 'desc')->take(10)->count();
+
+        return view('welcome', [
+            'tracks' => $latest_tracks,
+            'count_tracks' => $count_latest_tracks
+        ]);
+    }
+
     public function getProfilePage($user_id) {
         $user = User::where('id', $user_id)->first();
         $auth_user = Auth::user();
+
+        if(!$auth_user) {
+            Session::flash('error', 'You need to log in to get this page first.');
+
+            return redirect()->route('home');
+        }
 
         // check if the authenticated user follows the current user
         $following = !empty(Follower::where([
@@ -35,14 +52,20 @@ class PageController extends Controller {
     }
 
     public function getDashboardPage() {
-        $latest_users = User::orderBy('id', 'desc')->get();
-        $latest_tracks = Track::orderBy('id', 'desc')->get();
-        $latest_albums = Album::orderby('id', 'desc')->get();
+        $latest_users = User::orderBy('id', 'desc')->take(10)->get();
+        $count_latest_users = User::orderBy('id', 'desc')->take(10)->count();
+        $latest_tracks = Track::orderBy('id', 'desc')->take(10)->get();
+        $count_latest_tracks = Track::orderBy('id', 'desc')->take(10)->count();
+        $latest_albums = Album::orderby('id', 'desc')->take(10)->get();
+        $count_latest_albums = Album::orderby('id', 'desc')->take(10)->count();
 
         return view('dashboard', [
             'users' => $latest_users,
+            'count_users' => $count_latest_users,
             'tracks' => $latest_tracks,
-            'albums' => $latest_albums
+            'count_tracks' => $count_latest_tracks,
+            'albums' => $latest_albums,
+            'count_albums' => $count_latest_albums
         ]);
     }
 
@@ -97,18 +120,18 @@ class PageController extends Controller {
         $user = User::where('id', $track->n_felhid)->first();
         $auth_user = Auth::user();
 
-        $track_is_fav = Favorite::where([
-            ['c_tipus', '=', 'track'],
-            ['n_tipus_id', '=', $track_id],
-            ['n_felh_id', '=', $auth_user->id]
-        ])->count();
-
         $track_fav_count = Favorite::where([
             ['c_tipus', '=', 'track'],
             ['n_tipus_id', '=', $track_id]
         ])->count();
 
         if($auth_user) {
+            $track_is_fav = Favorite::where([
+                ['c_tipus', '=', 'track'],
+                ['n_tipus_id', '=', $track_id],
+                ['n_felh_id', '=', $auth_user->id]
+            ])->count();
+
             // if authenticated: posts + favorites for the current user
             $posts = DB::select('
           select posts.*, users.c_felhnev, favorites.d_jelol_datum 
@@ -123,6 +146,7 @@ class PageController extends Controller {
                 ['post', $auth_user->id, $track_id]
             );
         } else {
+            $track_is_fav = null;
             // if not, just posts
             $posts = DB::select('
           select posts.*, users.c_felhnev 
@@ -170,18 +194,18 @@ class PageController extends Controller {
         $genre = Genre::where('id', $album->n_mufaj_id)->first();
         $auth_user = Auth::user();
 
-        $album_is_fav = Favorite::where([
-            ['c_tipus', '=', 'album'],
-            ['n_tipus_id', '=', $album_id],
-            ['n_felh_id', '=', $auth_user->id]
-        ])->count();
-
         $album_fav_count = Favorite::where([
             ['c_tipus', '=', 'album'],
             ['n_tipus_id', '=', $album_id]
         ])->count();
 
-        if(Auth::user()) {
+        if($auth_user) {
+            $album_is_fav = Favorite::where([
+                ['c_tipus', '=', 'album'],
+                ['n_tipus_id', '=', $album_id],
+                ['n_felh_id', '=', $auth_user->id]
+            ])->count();
+
             // if authenticated: posts + favorites for the current user
             $posts = DB::select('
           select posts.*, users.c_felhnev, favorites.d_jelol_datum 
@@ -196,6 +220,7 @@ class PageController extends Controller {
                 ['post', $auth_user->id, $album_id]
             );
         } else {
+            $album_is_fav = null;
             // if not, just posts
             $posts = DB::select('
           select posts.*, users.c_felhnev 

@@ -3,7 +3,7 @@ input, button {
 }
 
 #form-signin button {
-    width: 100%;
+    margin-top: 15px;
     font-size: 20px;
 }
 
@@ -11,23 +11,35 @@ input, button {
     margin-top: 10px;
 }
 
-.card {
-    -webkit-box-shadow: 0.25px 1px 4px 1px rgba(107,107,107,1);
-    -moz-box-shadow: 0.25px 1px 4px 1px rgba(107,107,107,1);
-    box-shadow: 0.25px 1px 4px 1px rgba(107,107,107,1);
+#panel-tracks {
+    margin-top: 10px;
 }
 
-.card h5 {
-    background: #893c3c;
-    color: white;
-    padding: 8px 20px;
+.section-title {
+    font-size: 24px;
+    font-weight: bold;
 }
 
-.card-body h4 {
-    text-align: center;
+.slick-prev, .slick-next {
+    top: 100px;
 }
 
-.error-msg {
-    color: #d81e1e;
-    font-size: 13px;
+.slick-prev {
+    left: -40px;
+}
+
+.img-thumbnail {
+    max-width: none;
+    margin-bottom: -15px;
+}
+
+.track-title {
+    font-weight: bold;
+    white-space: nowrap;
+    margin-bottom: 0;
+}
+
+.track-artist {
+    white-space: nowrap;
+    margin-top: -5px;
 }

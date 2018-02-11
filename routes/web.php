@@ -168,9 +168,9 @@ Route::group(['middleware' => ['web']], function() {
 
     // guest users
     Route::group(['middleware' => ['guest']], function() {
-        Route::get('/', function () {
-            return view('welcome');
-        })->name('home');
+        Route::get('/', [
+            'uses' => 'PageController@getHomePage'
+        ])->name('home');
 
         Route::get('/signup', [
             'uses' => 'PageController@getSignUpPage',

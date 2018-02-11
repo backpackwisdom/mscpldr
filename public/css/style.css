@@ -62,3 +62,46 @@ footer {
     padding: 3px;
     opacity: 0.8;
 }
+
+/* CARDS */
+.card {
+    -webkit-box-shadow: 0.25px 1px 4px 1px rgba(107,107,107,1);
+    -moz-box-shadow: 0.25px 1px 4px 1px rgba(107,107,107,1);
+    box-shadow: 0.25px 1px 4px 1px rgba(107,107,107,1);
+}
+
+.card h5 {
+    background: #893c3c;
+    color: white;
+    padding: 8px 20px;
+}
+
+.card-body h4 {
+    text-align: center;
+}
+
+/* FORM ERRORS */
+.error-msg {
+    color: #d81e1e;
+    font-size: 13px;
+}
+
+/* INPUT FIELDS */
+input {
+    padding: 3px 10px !important;
+}
+
+/* SELECT */
+select.form-control:not([size]):not([multiple]) {
+    padding: 3px 10px !important;
+    height: calc(2rem);
+}
+
+/* LABELS */
+label {
+    margin-bottom: 3px;
+}
+
+.form-group {
+    margin-bottom: 5px;
+}

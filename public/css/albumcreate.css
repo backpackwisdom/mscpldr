@@ -1,0 +1,36 @@
+input {
+    padding: 3px 10px !important;
+}
+
+#create-album-data label {
+    margin-bottom: .1rem;
+}
+
+#input-filter-list {
+    margin-bottom: 10px;
+}
+
+#cover {
+    margin-top: 10px;
+}
+
+.form-group {
+    margin-bottom: 0;
+}
+
+.list-group li {
+    padding: 5px 20px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.list-group li:hover {
+    background: #5588db;
+    color: white;
+    transition: 0.25s;
+}
+
+.list-group-item i {
+    margin-top: 3px;
+    float: right;
+}

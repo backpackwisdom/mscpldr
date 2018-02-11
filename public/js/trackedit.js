@@ -1,4 +1,4 @@
-var removeButton = '<button type="button" name="remove-cover">X</button>';
+var removeButton = '<button class="btn btn-outline-danger" type="button" name="remove-cover">X</button>';
 var avatarChanged = false;
 
 if(coverName != 'nocover.jpg') {

@@ -25,12 +25,15 @@ $(document).ready(function() {
                     var errors = resp.responseJSON.errors;
 
                     if(errors.hasOwnProperty('c_email')) {
-                        console.log(errors.c_email[0]);
+                        showFormError('#input_email', errors.c_email[0]);
+                    } else {
+                        hideFormError('#input_email');
                     }
 
+                    /*
                     if(errors.hasOwnProperty('c_avatarlink')) {
                         console.log(errors.c_avatarlink[0]);
-                    }
+                    }*/
                 }
             });
         } else {

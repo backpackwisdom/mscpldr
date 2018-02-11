@@ -7,3 +7,16 @@ document.addEventListener('play', function(e){
         }
     }
 }, true);
+
+$(document).ready(function() {
+    // enlarge cover
+    $('#album-cover').click(function() {
+        $('#album-cover-modal').show();
+        $('#modal-image').attr('src', $(this).attr('src'));
+    });
+
+// close cover
+    $('span[class="close"]').click(function() {
+        $('#album-cover-modal').hide();
+    });
+});

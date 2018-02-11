@@ -15,15 +15,21 @@ $(document).ready(function() {
                 var errors = resp.responseJSON.errors;
 
                 if(errors.hasOwnProperty('c_password_old')) {
-                    console.log(errors.c_password_old[0]);
+                    showFormError('#input_oldpass', errors.c_password_old[0]);
+                } else {
+                    hideFormError('#input_oldpass');
                 }
 
                 if(errors.hasOwnProperty('c_password_new')) {
-                    console.log(errors.c_password_new[0]);
+                    showFormError('#input_newpass', errors.c_password_new[0]);
+                } else {
+                    hideFormError('#input_newpass');
                 }
 
                 if(errors.hasOwnProperty('c_passconf_new')) {
-                    console.log(errors.c_passconf_new[0]);
+                    showFormError('#input_newpassconf', errors.c_passconf_new[0]);
+                } else {
+                    hideFormError('#input_newpassconf');
                 }
             }
         });

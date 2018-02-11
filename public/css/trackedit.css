@@ -1,0 +1,11 @@
+button[type="submit"] {
+    margin-top: 20px;
+}
+
+.col-1-corr {
+    padding-left: 5px;
+}
+
+.col-11-corr {
+    padding-right: 0px;
+}

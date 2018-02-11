@@ -44,13 +44,11 @@ class TrackController extends Controller {
     public function postUploadTrack(Request $request) {
         // validation
         $this->validate($request, [
-            'c_szam' => 'required',
             'c_cim' => 'required',
             'c_eloado' => 'required',
             'c_album' => 'required',
             'n_kiadev' => 'required',
         ], [
-            'c_szam.required' => 'You have to choose a song to upload.',
             'c_cim.required' => 'Track title is required.',
             'c_eloado.required' => 'Artist name is required.',
             'c_album.required' => 'Album name is required.',

@@ -95,13 +95,26 @@ class UserController extends Controller {
             'c_felhnev' => $request['c_username'],
             'password' => $request['c_password']
         ])) {
-            return redirect()->route('dashboard');
+            // modifying online status
+            $user = User::where('id', Auth::user()->id)->first();
+            $user->c_statusz = 'I';
+            $user->update();
+
+            $message = 'Welcome to the dashboard, '.Auth::user()->c_felhnev.'!';
+            Session::flash('message', $message);
+
+            return "success";
         }
 
         return redirect()->back();
     }
 
     public function getLogout() {
+        // modifying online status
+        $user = User::where('id', Auth::user()->id)->first();
+        $user->c_statusz = 'N';
+        $user->update();
+
         Auth::logout();
 
         return redirect()->route('home');
@@ -115,7 +128,6 @@ class UserController extends Controller {
 
     public function postAccountData(Request $request) {
         $user = Auth::user();
-        dd($request);
 
         switch($request['button']) {
             // form submitting

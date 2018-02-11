@@ -1,51 +1,85 @@
 $(document).ready(function() {
-    // the image is hidden by default
-    var hiddenImage = $('img').is('[hidden]');
-
-    // creating thumbnail + delete button for the chosen cover + not letting to upload large files
-    $("input[name='c_borito']").change(function() {
+    // audio input handling
+    $('input[name="c_szam"]').change(function() {
         var fileSize = (((this.files[0].size) / 1024).toFixed(2) / 1024).toFixed(2);
 
-        if(fileSize >= 8) {
-            $('button[type="submit"]').prop('disabled', true);
-            console.log('Your cover must be smaller than 8 MBs.');
+        // file size validation
+        if(fileSize > 20) {
+            $('button[type="submit"]').attr('disabled', true);
+            showFormError('#track', 'The track must not be larger than 20 MBs.');
         } else {
-            if(hiddenImage == true) {
-                $('img').removeAttr('hidden');
-            }
-
-            $('img').show();
-            setTempURL(this, "img[src='#']");
+            $('button[type="submit"]').removeAttr('disabled');
+            hideFormError('#track');
         }
 
-        $('#cover').append('<button type="button" name="remove-cover">X</button>');
+        // adding remove button
+        $('#track .row div').removeClass('col-lg-12');
+        $('#track .row div').addClass('col-lg-11 col-11-corr');
+        $('#track .row').append('' +
+            '<div class="col-lg-1 col-md-1 col-1-corr">' +
+                '<button class="btn btn-outline-danger" type="button" name="remove-track">X</button>' +
+            '</div>');
     });
 
-    // creating delete button for the chosen track + not letting to upload large files
-    $("input[name='c_szam']").change(function() {
-        var fileSize = (((this.files[0].size) / 1024).toFixed(2) / 1024).toFixed(2);
+    // image input handling
+    var _URL = window.URL || window.webkitURL;
 
-        if(fileSize >= 40) {
-            $('button[type="submit"]').prop('disabled', true);
-            console.log('Your song must be smaller than 40 MBs.');
+    $('input[name="c_borito"]').change(function() {
+        var file, img;
+        // check if input is empty
+        if((file = this.files[0])) {
+            img = new Image();
+            img.onload = function() {
+                // checking width and height
+                if(this.width < 500 || this.height < 500) {
+                    $('button[type="submit"]').attr('disabled', true);
+                    showFormError('#cover', 'The cover must be at least 500x500 pixels.');
+                } else {
+                    var fileSize = ((($('input[name="c_borito"]')[0].files[0].size) / 1024).toFixed(2) / 1024).toFixed(2);
+
+                    // check file size
+                    if(fileSize > 5) {
+                        $('button[type="submit"]').attr('disabled', true);
+                        hideFormError('#cover'); // hide error if there's any before
+                        showFormError('#cover', 'The cover must not be larger than 5 MBs.');
+                    } else {
+                        $('button[type="submit"]').removeAttr('disabled');
+                        hideFormError('#cover');
+
+                        // display thumbnail
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            $('img[src="#"]').attr('src', e.target.result);
+                            $('img').removeAttr('hidden');
+                        };
+
+                        reader.readAsDataURL($('input[name="c_borito"]')[0].files[0]);
+                    }
+                }
+            };
+            img.src = _URL.createObjectURL(file);
         }
 
-        $('#track').append('<button type="button" name="remove-track">X</button>')
+        // adding remove button
+        $('#cover').append('<button class="btn btn-outline-danger" type="button" name="remove-cover">X</button>');
     });
 
-    // removing chosen cover
+    // track removing button
+    $('#track').on('click', "button[name='remove-track']", function() {
+        hideFormError('#track'); // hide form error if there's any
+        $('button[type="submit"]').attr('disabled', true);
+        $("input[name='c_szam']").val("");
+        $(this).parent().remove();
+        $(this).remove();
+        $('#track .row div').removeClass('col-lg-11 col-11-corr');
+        $('#track .row div').addClass('col-lg-12');
+    });
+
+    // cover removing button
     $('#cover').on('click', "button[name='remove-cover']", function() {
-        $('button[type="submit"]').removeAttr('disabled');
         $('img').hide();
         $('img').attr('src', '#');
         $("input[name='c_borito']").val("");
-        $(this).remove();
-    });
-
-    // removing chosen track
-    $('#track').on('click', "button[name='remove-track']", function() {
-        $('button[type="submit"]').removeAttr('disabled');
-        $("input[name='c_szam']").val("");
         $(this).remove();
     });
 
@@ -62,30 +96,34 @@ $(document).ready(function() {
             contentType: false,
             success: function(resp) {
                 if(resp == "success") {
-                    console.log(resp);
+                    window.location = redirect_to;
                 }
             },
             error: function(resp) {
                 var errors = resp.responseJSON.errors;
 
-                if(errors.hasOwnProperty('c_szam')) {
-                    console.log(errors.c_szam[0]);
-                }
-
                 if(errors.hasOwnProperty('c_cim')) {
-                    console.log(errors.c_cim[0]);
+                    showFormError('#input_cim', errors.c_cim[0]);
+                } else {
+                    hideFormError('#input_cim');
                 }
 
                 if(errors.hasOwnProperty('c_eloado')) {
-                    console.log(errors.c_eloado[0]);
+                    showFormError('#input_eloado', errors.c_eloado[0]);
+                } else {
+                    hideFormError('#input_eloado');
                 }
 
                 if(errors.hasOwnProperty('c_album')) {
-                    console.log(errors.c_album[0]);
+                    showFormError('#input_album', errors.c_album[0]);
+                } else {
+                    hideFormError('#input_album');
                 }
 
                 if(errors.hasOwnProperty('n_kiadev')) {
-                    console.log(errors.n_kiadev[0]);
+                    showFormError('#input_kiadev', errors.n_kiadev[0]);
+                } else {
+                    hideFormError('#input_kiadev');
                 }
             }
         });

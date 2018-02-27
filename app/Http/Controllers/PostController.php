@@ -6,15 +6,16 @@ use Auth;
 use App\Post;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Session;
 
 class PostController extends Controller {
     public function postCreatePost(Request $request, $post_type, $type_id) {
         $this->validate($request, [
-            'c_szoveg' => 'required|max:1000'
+            'c_szoveg' => 'required|max:100'
         ], [
             'c_szoveg.required' => 'The body of the post is required.',
-            'c_szoveg.max' => 'The length of post must not be larger than 1000 chars.'
+            'c_szoveg.max' => 'The length of post must not be larger than 100 chars.'
         ]);
 
         $post = new Post();

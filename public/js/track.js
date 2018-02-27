@@ -35,11 +35,13 @@ $(document).ready(function() {
                     location.reload();
                 }
             },
-            error: function(err) {
+            error: function(resp) {
                 var errors = resp.responseJSON.errors;
 
                 if(errors.hasOwnProperty('c_szoveg')) {
-                    console.log(errors.c_szoveg[0]);
+                    showFormErrorNotInput('#textarea_body', errors.c_szoveg[0]);
+                } else {
+                    hideFormErrorNotInput('#textarea_body');
                 }
             }
         });

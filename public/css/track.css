@@ -1,6 +1,38 @@
+hr {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+#form-create-post {
+    margin-top: 10px;
+}
+
 #track-title {
     font-size: 30px;
     margin-bottom: 0;
+}
+
+#track-artist {
+    font-size: 22px;
+    margin-top: -4px;
+}
+
+.comment-box {
+    clear: left;
+    padding-bottom: 10px;
+}
+
+.comment-box .img-thumbnail {
+    border-radius: 20px;
+}
+
+.comment-user {
+    display: inline;
+}
+
+.comment-body {
+    display: inline;
+    margin-left: 25px;
 }
 
 #track-favs,

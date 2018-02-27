@@ -105,3 +105,9 @@ label {
 .form-group {
     margin-bottom: 5px;
 }
+
+/* BUTTONS */
+.btn {
+    font-weight: bold;
+    border: 1.5px solid;
+}

@@ -15,15 +15,17 @@
         <div class="col-lg-6 col-md-6">
             <section id="track-data">
                 <div class="row">
+                    <!-- track title & artist name -->
                     <div class="col-lg-9 col-md-9">
                         <div>
-                            <label id="track-title">{{ $track->c_cim }}</label>
+                            <label id="track-title"><strong>{{ $track->c_cim }}</strong></label>
                         </div>
                         <div>
-                            <label>{{ $track->c_eloado}}</label>
+                            <label id="track-artist">{{ $track->c_eloado}}</label>
                         </div>
                     </div>
 
+                    <!-- favorites -->
                     <div class="col-lg-3 col-md-3">
                         <div>
                             <label id="track-favs">{{ $track_fav_count }}</label>
@@ -44,26 +46,47 @@
                     </div>
                 </div>
 
+                <hr>
+
+                <!-- playable audio file -->
                 <audio controls controlsList="nodownload">
                     <source src="{{ route('track.content', ['filename' => $track->c_zenenev]) }}" type="audio/mpeg">
                     <p>Your browser does not support audio content.</p>
                 </audio>
 
+                <hr>
+
+                <!-- album data -->
                 <div>
                     <label><strong>Album:</strong> {{ $track->c_album }}</label>
                 </div>
+
+                <hr>
+
                 <div>
-                    <label><strong>Uploaded by:</strong> {{ $user->c_felhnev }}</label>
+                    <label>
+                        <strong>Uploaded by:</strong>
+                        <a href="{{ route('user.get', ['user_id' => $user->id]) }}">{{ $user->c_felhnev }}</a>
+                    </label>
                 </div>
+
+                <hr>
+
                 <div>
                     <label><strong>Release year:</strong> {{ $track->n_kiadev }}</label>
                 </div>
 
+                <hr>
+
+                <!-- edit/remove button for the uploader -->
                 @if(Auth::user() == $user)
                     <a class="btn btn-outline-primary" href="{{ route('track-edit.get', ['track_id' => $track->id]) }}">Edit</a>
                     <a class="btn btn-outline-danger" onclick="confirmMessage('Do you really want to remove this track?')" href="{{ route('track-remove.get', ['track_id' => $track->id]) }}">Remove</a>
+
+                    <hr>
                 @endif
 
+                <!-- description -->
                 <div>
                     <label><strong>Description</strong></label><br>
                     <label>{{ $track->c_leiras }}</label>
@@ -73,50 +96,47 @@
 
         <div class="col-lg-6 col-md-6">
             <section id="track-desc-and-comments">
+                <!-- track cover -->
                 <div>
                     <img id="track-cover" class="img-thumbnail" src="{{ route('track.cover', ['filename' => $track->c_boritonev]) }}" width="250" height="250">
                 </div>
 
+                <hr>
+
+                <!-- create post button & field -->
                 @if(Auth::user())
                     <button class="btn btn-outline-primary" type="button" name="post-create">Create new post</button>
-                @endif
 
-                @if(Auth::user())
                     <form action="{{ route('post.create', ['post_type' => 'track', 'type_id' => $track->id]) }}" method="post" id="form-create-post" hidden>
-                        <textarea name="c_szoveg" cols="50" rows="10"></textarea>
+                        <div id="textarea_body" class="form-group">
+                            <textarea class="form-control" name="c_szoveg" cols="50" rows="10"></textarea>
+                        </div>
+
                         <input type="hidden" name="_token" value="{{ Session::token() }}">
-                        <button type="submit">Send</button>
-                        <button type="button" name="post-cancel">Cancel</button>
+                        <button class="btn btn-outline-primary" type="submit">Send</button>
+                        <button class="btn btn-outline-danger" type="button" name="post-cancel">Cancel</button>
                     </form>
+
+                    <hr>
                 @endif
 
+                <!-- comments -->
                 <p><strong>Comments</strong></p>
 
                 @if(count($posts) > 0)
-                    @foreach($posts as $post)
-                        <article data-postid="{{ $post->id }}">
-                            <label>{{ $post->c_felhnev }} - {{ $post->created_at }}</label>
-
-                            @if(Auth::user())
-                                <button type="button" name="post-reply">Reply</button>
-
-                                @if($user == Auth::user())
-                                    <a name="post-delete" href="{{ route('post.remove', ['post_id' => $post->id]) }}">Remove</a><br>
-                                @else
-                                    <br>
-                                @endif
-
-                                @if(is_null($post->d_jelol_datum) and $user != Auth::user())
-                                    <a href="{{ route('favorite.add', ['type_name' => 'post', 'type_id' => $post->id]) }}">Upvote</a>
-                                @endif
-                            @endif
-
-                            <p>{{ $post->c_szoveg }}</p>
-                        </article>
-                    @endforeach
+                    <div id="track-comments">
+                        @foreach($posts as $post)
+                            <div class="comment-box" data-postid="{{ $post->id }}">
+                                <!-- place avatar here -->
+                                <div class="comment-user"><strong>{{ $post->c_felhnev }}</strong></div>
+                                <p class="comment-body">{{ $post->c_szoveg }}</p>
+                            </div>
+                        @endforeach
+                    </div>
                 @else
                     <p>There are no comments.</p>
                 @endif
+
             </section>
         </div>
     </div>
